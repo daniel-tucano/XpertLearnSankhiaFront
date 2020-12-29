@@ -5,6 +5,10 @@
   "minify": false,
   "urlRandomness": null,
   "https": false,
+<<<<<<< HEAD
   "scheme": null,
   "devClient": false
+=======
+  "scheme": null
+>>>>>>> 4b6277a1be86609d55f3cee2b80349a7a750990f
 }
