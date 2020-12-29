@@ -1,0 +1,8 @@
+azul_petroleo=rgb(1,65,75) #01414B
+azul_petroleo_hover=rgb(6,124,142) #067C8E 
+verde_escuro=rbg(2,107,46) #026B2E
+verde_claro=rgb(163,199,5)
+
+
+
+https://www.sankhya.com.br/wp-content/uploads/2018/08/logo.png
