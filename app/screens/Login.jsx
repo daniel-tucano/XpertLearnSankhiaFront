@@ -7,6 +7,7 @@ import AuthContext from '../contexts/AuthContextDev'
 function Login(props) {
     const { signInAsync } = useContext(AuthContext)
     const userLoginData = useRef({ email: '', password: '' })
+    const {isLoading} = useContext(isLoading)
 
     return (
         <View style={styles.container}>
@@ -42,7 +43,10 @@ function Login(props) {
             <View style={styles.login}>
                 <TouchableOpacity
                     style={styles.loginButton}
-                    onPress={() => signInAsync('custom', userLoginData.current)}
+                    onPress={() => {
+                        isLoading(true);
+                        signInAsync('custom', userLoginData.current)
+                    }}
                 >
                     <Text style={styles.loginButtonText}>Login</Text>
                 </TouchableOpacity>
