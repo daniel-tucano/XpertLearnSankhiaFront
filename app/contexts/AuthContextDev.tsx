@@ -73,7 +73,6 @@ export const AuthContextProvider = ({
                         )
                         .then((result) => {
                             if (result.user) {
-                                console.log(result)
                                 setUser(result.user)
                                 setLogged(true)
                             } else {
