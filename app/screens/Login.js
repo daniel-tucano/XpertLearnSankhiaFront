@@ -28,6 +28,7 @@ function Login(props) {
                     style={styles.textInput}
                     textContentType="password"
                     editable
+                    secureTextEntry
                     placeholderTextColor="grey"
                     placeholder="Senha"
                 />
