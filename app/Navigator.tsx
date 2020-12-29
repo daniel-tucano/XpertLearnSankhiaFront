@@ -22,7 +22,7 @@ const Navigator = () => {
                             headerShown: false,
                         }}
                     />
-                    <StackNavigator.Screen name="Perfil" component={Profile} />
+                    <StackNavigator.Screen name="profile" component={Profile} />
                 </>
             ) : (
                 <StackNavigator.Screen name="login" component={Login} />
