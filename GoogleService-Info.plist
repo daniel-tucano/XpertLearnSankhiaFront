@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>438802009130-tlhba3q6c79du4tkhludjq8g93r4m2go.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.438802009130-tlhba3q6c79du4tkhludjq8g93r4m2go</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>438802009130-vhmnndq3l9gsjf1s47849inkrcehscno.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyC_7OhCHie8iXJa7cdNjvu17A7PZMLP0rM</string>
+	<key>GCM_SENDER_ID</key>
+	<string>438802009130</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.xpertlearning.xpertSankhya</string>
+	<key>PROJECT_ID</key>
+	<string>xpert-sankhia</string>
+	<key>STORAGE_BUCKET</key>
+	<string>xpert-sankhia.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:438802009130:ios:756b3605d599dbd323c753</string>
+</dict>
+</plist>

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "438802009130",
+    "project_id": "xpert-sankhia",
+    "storage_bucket": "xpert-sankhia.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:438802009130:android:4dd3e84cfb1060a523c753",
+        "android_client_info": {
+          "package_name": "com.xpertlearning.xpertSankhya"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "438802009130-vhmnndq3l9gsjf1s47849inkrcehscno.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.xpertlearning.xpertSankhya",
+            "certificate_hash": "d51714a76ac03a6e0a10c71f57884eda258c6167"
+          }
+        },
+        {
+          "client_id": "438802009130-dgoqfc2emkie1474mu7sso1ie9k96it6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAR2JGOUCkYV8m_VRdVv9HtjJ1Pv-Lbafo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "438802009130-dgoqfc2emkie1474mu7sso1ie9k96it6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

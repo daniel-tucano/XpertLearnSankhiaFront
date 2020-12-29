@@ -1,20 +1,16 @@
 import React, { useState, useEffect, createContext } from 'react'
+import * as GoogleSignIn from 'expo-google-sign-in'
 import { setAuthToken, UserAPI, UserType } from '../api/xpertSankhyaAPI'
-import firebase from 'firebase'
-import fireApp from '../firebase/fireApp'
-
-const googleProvider = new firebase.auth.GoogleAuthProvider()
-googleProvider.addScope('https://www.googleapis.com/auth/cloud-platform')
 
 interface AuthContextType {
-    signIn: (
+    signInAsync: (
         providerOption: string,
         additionalData?: { email: string; password: string }
-    ) => void
-    signOut: () => void
+    ) => Promise<void>
+    signOutAsync: () => Promise<void>
     isLogged: boolean
     updateUserData: () => Promise<void>
-    user: firebase.User | undefined
+    user: GoogleSignIn.GoogleUser | undefined
     userData: UserType | undefined
 }
 
@@ -26,100 +22,75 @@ export const AuthContextProvider = ({
     children: React.ReactNode
 }) => {
     const [isLogged, setLogged] = useState(false)
-    const [user, setUser] = useState<firebase.User | undefined>(undefined)
+    const [user, setUser] = useState<GoogleSignIn.GoogleUser | undefined>(
+        undefined
+    )
     const [userData, setUserData] = useState<UserType | undefined>(undefined)
 
     useEffect(() => {
-        fireApp.auth().onIdTokenChanged(async (usuario) => {
-            if (usuario) {
-                // console.log(usuario)
-                const authToken = await usuario.getIdToken()
-                setAuthToken(authToken)
-                const usuarioDB = await UserAPI.getOne(usuario.uid)
-                setUserData(usuarioDB.data)
-                setUser(usuario)
-                setLogged(true)
-            }
-        })
-
-        fireApp
-            .auth()
-            .getRedirectResult()
-            .then(async (result) => {
-                if (result.user) {
-                    // console.log(result)
-                    const authToken = await result.user.getIdToken()
-                    setAuthToken(authToken)
-                    const usuarioDB = await UserAPI.getOne(result.user.uid)
-                    setUserData(usuarioDB.data)
-                    setUser(result.user)
-                    setLogged(true)
-                }
+        GoogleSignIn.initAsync()
+        GoogleSignIn.signInSilentlyAsync()
+            .then((user) => {
+                _handleSignInAsync(user)
             })
             .catch((error) => {
-                console.log(error.message)
-                setUser(undefined)
-                setLogged(false)
+                console.log(error)
             })
     }, [])
 
-    const signIn = (
+    const signInAsync = async (
         providerOption: string,
         additionalData?: { email: string; password: string }
     ) => {
         // Baseado no valor de providerOption escolhe o provider adequado
         switch (providerOption) {
             case 'google':
-                fireApp.auth().signInWithRedirect(googleProvider)
+                await GoogleSignIn.askForPlayServicesAsync()
+                const { type, user } = await GoogleSignIn.signInAsync()
+                if (type === 'success') {
+                    _handleSignInAsync(user)
+                }
                 break
             // case 'facebook':
             //     fireApp.auth().signInWithRedirect(facebookProvider)
             //     break
-            case 'custom':
-                if (additionalData) {
-                    fireApp
-                        .auth()
-                        .signInWithEmailAndPassword(
-                            additionalData.email,
-                            additionalData.password
-                        )
-                        .then((result) => {
-                            if (result.user) {
-                                console.log(result)
-                                setUser(result.user)
-                                setLogged(true)
-                            } else {
-                                setUser(undefined)
-                                setLogged(false)
-                            }
-                        })
-                        .catch((error) => {
-                            console.log(error.message)
-                            setUser(undefined)
-                            setLogged(false)
-                        })
-                } else {
-                    console.log('please specify an email and a password')
-                }
-                break
+            // case 'custom':
+            // if (additionalData) {
+            //     fireApp
+            //         .auth()
+            //         .signInWithEmailAndPassword(
+            //             additionalData.email,
+            //             additionalData.password
+            //         )
+            //         .then((result) => {
+            //             if (result.user) {
+            //                 console.log(result)
+            //                 setUser(result.user)
+            //                 setLogged(true)
+            //             } else {
+            //                 setUser(undefined)
+            //                 setLogged(false)
+            //             }
+            //         })
+            //         .catch((error) => {
+            //             console.log(error.message)
+            //             setUser(undefined)
+            //             setLogged(false)
+            //         })
+            // } else {
+            //     console.log('please specify an email and a password')
+            // }
+            // break
             default:
                 console.log('selecione um provedor de autenticação')
         }
     }
 
-    const signOut = () => {
-        fireApp
-            .auth()
-            .signOut()
-            .then(() => {
-                setUser(undefined)
-                setLogged(false)
-                console.log('user sign out')
-            })
-            .catch((error) => {
-                console.log('an error ocurred on user sign out process')
-                console.log(error.message)
-            })
+    const signOutAsync = async () => {
+        await GoogleSignIn.signInAsync()
+        setUser(undefined)
+        setLogged(false)
+        console.log('user sign out')
     }
 
     // Atualiza os dados do usuario atual quando invocado
@@ -129,11 +100,21 @@ export const AuthContextProvider = ({
         setUserData(usuarioDB.data)
     }
 
+    const _handleSignInAsync = async (user: GoogleSignIn.GoogleUser) => {
+        if (!user) return
+        setLogged(true)
+        setUser(user)
+        const authToken = user.auth.accessToken
+        setAuthToken(authToken)
+        const usuarioDB = await UserAPI.getOne(user.uid)
+        setUserData(usuarioDB.data)
+    }
+
     return (
         <AuthContext.Provider
             value={{
-                signIn,
-                signOut,
+                signInAsync,
+                signOutAsync,
                 updateUserData,
                 isLogged,
                 user,

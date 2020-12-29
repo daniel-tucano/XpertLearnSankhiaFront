@@ -1,4 +1,4 @@
-import firebase from 'firebase/app'
+import firebase from 'firebase'
 import 'firebase/auth'
 
 const firebaseConfig = {
@@ -11,9 +11,9 @@ const firebaseConfig = {
     measurementId: 'G-JLXD9K29T4',
 }
 
-const fireApp = firebase.initializeApp(firebaseConfig)
+firebase.initializeApp(firebaseConfig)
 
-export const storage = fireApp
+export const storage = firebase
     .storage()
     .refFromURL('gs://xpert-sankhia.appspot.com/')
-export default fireApp
+export default firebase
