@@ -2,6 +2,7 @@ import React from 'react'
 import { Text } from 'react-native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import TopBar from '../../components/TopBar'
+import { Entypo } from '@expo/vector-icons';
 
 const Tab = createMaterialTopTabNavigator()
 
@@ -14,8 +15,9 @@ const Main = () => {
             <Tab.Navigator
                 initialRouteName="Feed"
                 tabBarOptions={{
-                    activeTintColor: 'grey',
-                    labelStyle: { fontSize: 12 },
+                    inactiveTintColor: 'grey',
+                    activeTintColor: 'black',
+                    labelStyle: { fontSize: 10 },
                     style: { backgroundColor: 'white', height: 42 },
                 }}
             >
