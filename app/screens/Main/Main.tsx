@@ -11,9 +11,9 @@ const Main = () => {
         <Tab.Navigator
             initialRouteName="Feed"
             tabBarOptions={{
-                activeTintColor: '#e91e63',
+                activeTintColor: 'grey',
                 labelStyle: { fontSize: 12 },
-                style: { backgroundColor: 'powderblue' },
+                style: { backgroundColor: 'white' },
             }}
         >
             <Tab.Screen

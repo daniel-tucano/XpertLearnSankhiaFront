@@ -7,7 +7,7 @@ import { UserAPI, UserType, setAuthToken } from '../api/xpertSankhyaAPI'
 
 interface AuthContextType {
     signInAsync: (
-        providerOption: string,
+        providerOption: 'google' | 'custom',
         additionalData?: { email: string; password: string }
     ) => Promise<void>
     signOutAsync: () => Promise<void>
@@ -76,7 +76,6 @@ export const AuthContextProvider = ({
                                 console.log(result)
                                 setUser(result.user)
                                 setLogged(true)
-                                console.log(result.user)
                             } else {
                                 setUser(undefined)
                                 setLogged(false)

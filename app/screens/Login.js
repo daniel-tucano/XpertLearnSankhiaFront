@@ -1,13 +1,13 @@
-import React from 'react'
+import React, { useRef, useContext } from 'react'
 import { StyleSheet, View, Text, Image } from 'react-native'
-import {
-    TextInput,
-    TouchableHighlight,
-    TouchableOpacity,
-} from 'react-native-gesture-handler'
+import { TextInput, TouchableOpacity } from 'react-native-gesture-handler'
 import { Fontisto, Ionicons } from '@expo/vector-icons'
+import AuthContext from '../contexts/AuthContextDev'
 
 function Login(props) {
+    const { signInAsync } = useContext(AuthContext)
+    const userLoginData = useRef({ email: '', password: '' })
+
     return (
         <View style={styles.container}>
             <View style={styles.login}>
@@ -20,6 +20,9 @@ function Login(props) {
                     textContentType="emailAddress"
                     editable
                     placeholder="Email"
+                    onChangeText={(e) => {
+                        userLoginData.current.email = e
+                    }}
                 />
             </View>
             <View style={styles.login}>
@@ -31,10 +34,16 @@ function Login(props) {
                     secureTextEntry
                     placeholderTextColor="grey"
                     placeholder="Senha"
+                    onChangeText={(e) => {
+                        userLoginData.current.password = e
+                    }}
                 />
             </View>
             <View style={styles.login}>
-                <TouchableOpacity style={styles.loginButton}>
+                <TouchableOpacity
+                    style={styles.loginButton}
+                    onPress={() => signInAsync('custom', userLoginData.current)}
+                >
                     <Text style={styles.loginButtonText}>Login</Text>
                 </TouchableOpacity>
             </View>
