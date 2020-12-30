@@ -49,8 +49,7 @@ export const AuthContextProvider = ({
         // Baseado no valor de providerOption escolhe o provider adequado
         switch (providerOption) {
             case 'google':
-                await GoogleSignIn.askForPlayServicesAsync()
-                isLoading(false);
+                await GoogleSignIn.askForPlayServicesAsync().then(()=> isLoading(false))
                 const { type, user } = await GoogleSignIn.signInAsync()
                 if (type === 'success') {
                     _handleSignInAsync(user)
