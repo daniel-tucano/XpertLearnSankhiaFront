@@ -11,7 +11,7 @@ interface AuthContextType {
         additionalData?: { email: string; password: string }
     ) => Promise<void>
     signOutAsync: () => Promise<void>
-    isLogged: boolean
+    loginState: 'notLogged' | 'loading' | 'logged'
     updateUserData: () => Promise<void>
     user: firebase.User | undefined
     userData: UserType | undefined
@@ -26,7 +26,9 @@ export const AuthContextProvider = ({
 }: {
     children: React.ReactNode
 }) => {
-    const [isLogged, setLogged] = useState(false)
+    const [loginState, setLoginState] = useState<
+        'notLogged' | 'loading' | 'logged'
+    >('notLogged')
     const [user, setUser] = useState<firebase.User | undefined>(undefined)
     const [userData, setUserData] = useState<UserType | undefined>(undefined)
 
@@ -48,6 +50,8 @@ export const AuthContextProvider = ({
                 .then((userCredential) => {
                     _handleSignInAsync(userCredential.user)
                 })
+        } else {
+            setLoginState('notLogged')
         }
     }, [response])
 
@@ -55,10 +59,11 @@ export const AuthContextProvider = ({
         providerOption: 'google' | 'custom',
         additionalData?: { email: string; password: string }
     ) => {
+        setLoginState('loading')
         // Baseado no valor de providerOption escolhe o provider adequado
         switch (providerOption) {
             case 'google':
-                promptAsync()
+                await promptAsync()
                 break
             // case 'facebook':
             //     firebase.auth().signInWithRedirect(facebookProvider)
@@ -74,16 +79,16 @@ export const AuthContextProvider = ({
                         .then((result) => {
                             if (result.user) {
                                 setUser(result.user)
-                                setLogged(true)
+                                setLoginState('logged')
                             } else {
                                 setUser(undefined)
-                                setLogged(false)
+                                setLoginState('notLogged')
                             }
                         })
                         .catch((error) => {
                             console.log(error.message)
                             setUser(undefined)
-                            setLogged(false)
+                            setLoginState('notLogged')
                         })
                 } else {
                     console.log('please specify an email and a password')
@@ -97,7 +102,7 @@ export const AuthContextProvider = ({
     const signOutAsync = async () => {
         await firebase.auth().signOut()
         setUser(undefined)
-        setLogged(false)
+        setLoginState('notLogged')
         console.log('user sign out')
     }
 
@@ -110,7 +115,7 @@ export const AuthContextProvider = ({
 
     const _handleSignInAsync = async (user: firebase.User) => {
         if (!user) return
-        setLogged(true)
+        setLoginState('logged')
         setUser(user)
         const authToken = await user.getIdToken()
         setAuthToken(authToken)
@@ -124,7 +129,7 @@ export const AuthContextProvider = ({
                 signInAsync,
                 signOutAsync,
                 updateUserData,
-                isLogged,
+                loginState,
                 user,
                 userData,
             }}
