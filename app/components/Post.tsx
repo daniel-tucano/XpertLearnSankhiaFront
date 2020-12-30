@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { View, StyleSheet, Text, Image } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
-import { PostType, UserType, UserAPI } from '../api/xpertSankhyaAPI'
+import { PostType, UserType, UserAPI, PostAPI } from '../api/xpertSankhyaAPI'
 import {
     AntDesign,
     MaterialIcons,
@@ -18,7 +18,7 @@ interface PostPropsType {
 }
 
 function Post({ post }: PostPropsType) {
-    // const { userData: {  } } = useContext(AuthContext)
+    const { user } = useContext(AuthContext)
 
     const navigation = useNavigation()
 
@@ -28,15 +28,12 @@ function Post({ post }: PostPropsType) {
 
     useEffect(() => {
         setUserIsLoading(true)
+        setLike(post.likes.some((post) => post.creatorUid === user.uid))
         UserAPI.getOne(post.creatorUid).then((userRespose) => {
             setCreatorData(userRespose.data)
             setUserIsLoading(false)
         })
     }, [post])
-
-    // useEffect(() => {
-
-    // },[loggedUserData])
 
     return (
         <View style={styles.post}>
@@ -49,14 +46,18 @@ function Post({ post }: PostPropsType) {
                             justifyContent: 'flex-start',
                             alignItems: 'center',
                             flexDirection: 'row',
+                            height: '100%',
                         }}
+                        onPress={() =>
+                            navigation.navigate('profile', {
+                                userUid: user.uid,
+                            })
+                        }
                     >
-                        <View style={styles.userImageView}>
-                            <Image
-                                style={styles.userImage}
-                                source={{ uri: creatorData.profilePic.url }}
-                            />
-                        </View>
+                        <Image
+                            style={styles.userImage}
+                            source={{ uri: creatorData.profilePic.url }}
+                        />
                         <View style={styles.userNameView}>
                             <Text style={styles.userNameText}>
                                 {creatorData.username}
@@ -69,50 +70,58 @@ function Post({ post }: PostPropsType) {
                 <TouchableOpacity
                     style={styles.postImage}
                     onPress={() =>
-                        navigation.navigate('postImageView', [
-                            post.content.payload,
-                        ])
+                        navigation.navigate('postImageView', {
+                            uris: post.content.payload,
+                        })
                     }
                 >
-                    {post.content.type === 'image' && (
-                        <Image
-                            style={{ height: '100%', width: '100%' }}
-                            source={{ uri: post.content.payload }}
-                        />
-                    )}
+                    {post.content.type === 'image' &&
+                        post.content.payload.length === 1 && (
+                            <Image
+                                style={{
+                                    height: '100%',
+                                    width: '100%',
+                                    borderBottomWidth: 1,
+                                    borderColor: 'gray',
+                                }}
+                                source={{ uri: post.content.payload[0] }}
+                            />
+                        )}
                 </TouchableOpacity>
+                <View style={styles.buttons}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            like
+                                ? PostAPI.dislike(post._id)
+                                      .then(() => setLike(false))
+                                      .catch((e) => console.log(e))
+                                : PostAPI.like(post._id)
+                                      .then(() => setLike(true))
+                                      .catch((e) => console.log(e))
+                        }}
+                    >
+                        <AntDesign
+                            name={like ? 'heart' : 'hearto'}
+                            size={24}
+                            color={like ? 'red' : 'black'}
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <MaterialIcons name="message" size={24} color="black" />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <Ionicons name="expand" size={24} color="black" />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <MaterialCommunityIcons
+                            name="dots-vertical"
+                            size={24}
+                            color="black"
+                        />
+                    </TouchableOpacity>
+                </View>
                 <View style={styles.postTextView}>
-                    <View style={styles.buttons}>
-                        <TouchableOpacity
-                            onPress={() => setLike((like = !like))}
-                        >
-                            <AntDesign
-                                name={like ? 'heart' : 'hearto'}
-                                size={24}
-                                color="black"
-                            />
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <MaterialIcons
-                                name="message"
-                                size={24}
-                                color="black"
-                            />
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Ionicons name="expand" size={24} color="black" />
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <MaterialCommunityIcons
-                                name="dots-vertical"
-                                size={24}
-                                color="black"
-                            />
-                        </TouchableOpacity>
-                    </View>
-                    <Text style={styles.postText}>
-                        Texto inserido aqui lorem ipsum dolor amet lorem ipsum
-                    </Text>
+                    <Text style={styles.postText}>{post.description}</Text>
                 </View>
             </View>
         </View>
@@ -123,31 +132,28 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     post: {
-        height: 540,
-        margin: 20,
+        height: 'auto',
+        marginVertical: 10,
+        width: '100%',
         backgroundColor: 'white',
         borderWidth: 0.5,
         borderColor: 'grey',
-        borderRadius: 5,
+        // borderRadius: 5,
     },
     postTitle: {
         height: 60,
         backgroundColor: 'white',
-        borderBottomWidth: 0.5,
+        borderBottomWidth: 1,
         borderColor: 'grey',
-        borderRadius: 10,
-    },
-    userImageView: {
-        height: 45,
-        width: 45,
-        backgroundColor: 'black',
-        borderRadius: 100,
-        marginLeft: '5%',
+        // borderRadius: 10,
     },
     userImage: {
         height: 45,
         width: 45,
         borderRadius: 100,
+        borderWidth: 1,
+        borderColor: '#c6b9b9',
+        marginLeft: '3%',
     },
     userNameView: {
         width: '75%',
@@ -168,24 +174,25 @@ const styles = StyleSheet.create({
     },
     buttons: {
         width: '100%',
-        height: 30,
+        height: 50,
         flexDirection: 'row',
-        justifyContent: 'space-evenly',
+        justifyContent: 'space-around',
         alignItems: 'center',
     },
     postTextView: {
         width: '100%',
         height: 'auto',
         maxHeight: 100,
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
     },
     postText: {
         fontSize: 15,
         fontFamily: 'sans-serif',
         fontWeight: '500',
-        textAlign: 'left',
-        padding: 15,
+        paddingVertical: 15,
+        paddingLeft: 6,
+        // fontStyle:,
     },
 })
 export default Post

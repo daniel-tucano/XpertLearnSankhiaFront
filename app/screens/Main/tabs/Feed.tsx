@@ -8,7 +8,6 @@ function Feed() {
 
     useEffect(() => {
         PostAPI.getPage().then((postsPageResponse) => {
-            console.log(postsPageResponse.data.docs)
             setPosts(postsPageResponse.data.docs)
         })
     }, [])
