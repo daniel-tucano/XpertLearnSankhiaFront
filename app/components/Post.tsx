@@ -1,25 +1,30 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { View, StyleSheet, Text, Image } from 'react-native'
-import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler'
+import { TouchableOpacity } from 'react-native-gesture-handler'
+import { useNavigation } from '@react-navigation/native'
 import { PostType, UserType, UserAPI } from '../api/xpertSankhyaAPI'
-import { AntDesign } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons'; 
-import { Ionicons } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-
+import {
+    AntDesign,
+    MaterialIcons,
+    Ionicons,
+    MaterialCommunityIcons,
+} from '@expo/vector-icons'
+import AuthContext from '../contexts/AuthContextDev'
 
 import PostLoader from './PostLoader'
 
 interface PostPropsType {
     post: PostType
 }
-interface PostLikes{
-    like:Boolean
-}
+
 function Post({ post }: PostPropsType) {
+    // const { userData: {  } } = useContext(AuthContext)
+
+    const navigation = useNavigation()
+
     const [userIsLoading, setUserIsLoading] = useState<boolean>(true)
     const [creatorData, setCreatorData] = useState<UserType | null>(null)
-    let [like,setLike] = useState<Boolean>(false)
+    let [like, setLike] = useState<Boolean>(false)
 
     useEffect(() => {
         setUserIsLoading(true)
@@ -29,27 +34,46 @@ function Post({ post }: PostPropsType) {
         })
     }, [post])
 
+    // useEffect(() => {
+
+    // },[loggedUserData])
+
     return (
         <View style={styles.post}>
             {userIsLoading ? (
                 <PostLoader />
             ) : (
                 <View style={styles.postTitle}>
-                    <View style={styles.userImageView}>
-                        <Image
-                            style={styles.userImage}
-                            source={{ uri: creatorData.profilePic.url }}
-                        />
-                    </View>
-                    <View style={styles.userNameView}>
-                        <Text style={styles.userNameText}>
-                            {creatorData.username}
-                        </Text>
-                    </View>
+                    <TouchableOpacity
+                        style={{
+                            justifyContent: 'flex-start',
+                            alignItems: 'center',
+                            flexDirection: 'row',
+                        }}
+                    >
+                        <View style={styles.userImageView}>
+                            <Image
+                                style={styles.userImage}
+                                source={{ uri: creatorData.profilePic.url }}
+                            />
+                        </View>
+                        <View style={styles.userNameView}>
+                            <Text style={styles.userNameText}>
+                                {creatorData.username}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
                 </View>
             )}
             <View>
-                <TouchableOpacity style={styles.postImage}>
+                <TouchableOpacity
+                    style={styles.postImage}
+                    onPress={() =>
+                        navigation.navigate('postImageView', [
+                            post.content.payload,
+                        ])
+                    }
+                >
                     {post.content.type === 'image' && (
                         <Image
                             style={{ height: '100%', width: '100%' }}
@@ -59,25 +83,38 @@ function Post({ post }: PostPropsType) {
                 </TouchableOpacity>
                 <View style={styles.postTextView}>
                     <View style={styles.buttons}>
-                        <TouchableOpacity onPress={()=>setLike(like = !like)}>
-                            <AntDesign name={like?"heart":"hearto"} size={24} color="black" />
+                        <TouchableOpacity
+                            onPress={() => setLike((like = !like))}
+                        >
+                            <AntDesign
+                                name={like ? 'heart' : 'hearto'}
+                                size={24}
+                                color="black"
+                            />
                         </TouchableOpacity>
                         <TouchableOpacity>
-                            <MaterialIcons name="message" size={24} color="black" />
+                            <MaterialIcons
+                                name="message"
+                                size={24}
+                                color="black"
+                            />
                         </TouchableOpacity>
                         <TouchableOpacity>
                             <Ionicons name="expand" size={24} color="black" />
                         </TouchableOpacity>
                         <TouchableOpacity>
-                        <MaterialCommunityIcons name="dots-vertical" size={24} color="black" />
+                            <MaterialCommunityIcons
+                                name="dots-vertical"
+                                size={24}
+                                color="black"
+                            />
                         </TouchableOpacity>
                     </View>
                     <Text style={styles.postText}>
-                            Texto inserido aqui lorem ipsum dolor amet lorem ipsum
+                        Texto inserido aqui lorem ipsum dolor amet lorem ipsum
                     </Text>
                 </View>
             </View>
-            
         </View>
     )
 }
@@ -99,9 +136,6 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0.5,
         borderColor: 'grey',
         borderRadius: 10,
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        flexDirection: 'row',
     },
     userImageView: {
         height: 45,
@@ -127,32 +161,31 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'left',
     },
-    postImage: { 
+    postImage: {
         width: '100%',
-        height: 'auto', 
-        maxHeight: 340 
+        height: 'auto',
+        maxHeight: 340,
     },
-    buttons:{
-        width:'100%',
-        height:30,
-        flexDirection:'row',
-        justifyContent:'space-evenly',
-        alignItems:'center'
-        
+    buttons: {
+        width: '100%',
+        height: 30,
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
     },
-    postTextView:{
-        width:'100%',
-        height:"auto",
-        maxHeight:100,
-        alignItems:"center",
-        justifyContent:"center"
+    postTextView: {
+        width: '100%',
+        height: 'auto',
+        maxHeight: 100,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    postText:{
+    postText: {
         fontSize: 15,
         fontFamily: 'sans-serif',
         fontWeight: '500',
         textAlign: 'left',
-        padding:15
-    }
+        padding: 15,
+    },
 })
 export default Post
