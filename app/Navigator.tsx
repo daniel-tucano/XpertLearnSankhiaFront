@@ -12,7 +12,7 @@ export type RootStackParamList = {
     profile: { userUid: string }
     main: undefined
     login: undefined
-    postImageView: string[]
+    postImageView: { uris: string[] }
 }
 
 const StackNavigator = createStackNavigator<RootStackParamList>()
