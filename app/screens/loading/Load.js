@@ -1,7 +1,7 @@
 import React from 'react'
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, StyleSheet, View } from 'react-native'
 
-function Load(props) {
+function Load() {
     return (
         <View style={[styles.container, styles.horizontal]}>
             <ActivityIndicator size="large" color="#000" />

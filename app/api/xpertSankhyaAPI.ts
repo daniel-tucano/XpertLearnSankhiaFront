@@ -73,18 +73,14 @@ export const setAuthToken = (authToken: string) => {
 
 export const UserAPI: basicAPI<UserType> = class UserAPI {
     static async getOne(userID: string) {
-        const userDataResponse = await axios.get<UserType>(`/users/${userID}`)
-
-        return {
-            ...userDataResponse,
-        }
+        return await axios.get<UserType>(`/users/${userID}`)
     }
 
     static async getPage(
         query?: QueryBuilder,
         options: { page?: number; limit?: number } = { page: 1, limit: 10 }
     ) {
-        let queryString
+        let queryString: string
         if (query?.filter) {
             queryString = `${query?.toQuery().substring(1)}&`
         }
@@ -112,6 +108,90 @@ export const UserAPI: basicAPI<UserType> = class UserAPI {
 
     static async deleteOne(userID: string) {
         return axios.delete<UserType>(`/users/${userID}`, {
+            withCredentials: true,
+        })
+    }
+}
+
+export const PostAPI: basicAPI<PostType> = class PostAPI {
+    static async getOne(postID: string) {
+        return await axios.get<PostType>(`/posts/${postID}`)
+    }
+
+    static async getPage(
+        query?: QueryBuilder,
+        options: { page?: number; limit?: number } = { page: 1, limit: 10 }
+    ) {
+        let queryString: string
+        if (query?.filter) {
+            queryString = `${query?.toQuery().substring(1)}&`
+        }
+
+        return axios.get<PaginationResult<PostType>>(
+            `/posts?${queryString}page=${options.page}&limit=${options.limit}`
+        )
+    }
+
+    static async createOne(
+        postData: PostType,
+        onUploadProgress?: (progressEvent: ProgressEvent<EventTarget>) => void
+    ) {
+        return axios.post<PostType>(`/posts`, postData, {
+            withCredentials: true,
+            onUploadProgress,
+        })
+    }
+
+    static async updateOne(postID: string, updateData: PostType) {
+        return axios.put<PostType>(`/posts/${postID}`, updateData, {
+            withCredentials: true,
+        })
+    }
+
+    static async deleteOne(postID: string) {
+        return axios.delete<PostType>(`/posts/${postID}`, {
+            withCredentials: true,
+        })
+    }
+}
+
+export const CommentAPI: basicAPI<CommentType> = class CommentAPI {
+    static async getOne(commentID: string) {
+        return await axios.get<CommentType>(`/comments/${commentID}`)
+    }
+
+    static async getPage(
+        query?: QueryBuilder,
+        options: { page?: number; limit?: number } = { page: 1, limit: 10 }
+    ) {
+        let queryString: string
+        if (query?.filter) {
+            queryString = `${query?.toQuery().substring(1)}&`
+        }
+
+        return axios.get<PaginationResult<CommentType>>(
+            `/comments?${queryString}page=${options.page}&limit=${options.limit}`
+        )
+    }
+
+    static async createOne(
+        commentData: CommentType,
+        onUploadProgress?: (progressEvent: ProgressEvent<EventTarget>) => void
+    ) {
+        return axios.post<CommentType>(`/comments`, commentData, {
+            withCredentials: true,
+            onUploadProgress,
+        })
+    }
+
+    static async updateOne(commentID: string, updateData: CommentType) {
+        return axios.put<CommentType>(`/comments/${commentID}`, updateData, {
+            withCredentials: true,
+        })
+    }
+
+    static async deleteOne(commentID: string) {
+        return axios.delete<CommentType>(`/comments/${commentID}`, {
             withCredentials: true,
         })
     }
