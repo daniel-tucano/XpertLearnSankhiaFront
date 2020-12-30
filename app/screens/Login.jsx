@@ -7,7 +7,7 @@ import AuthContext from '../contexts/AuthContextDev'
 function Login(props) {
     const { signInAsync } = useContext(AuthContext)
     const userLoginData = useRef({ email: '', password: '' })
-
+    const {isLoading} = useContext(AuthContext)
     return (
         <View style={styles.container}>
             <View style={styles.login}>
@@ -42,11 +42,15 @@ function Login(props) {
             <View style={styles.login}>
                 <TouchableOpacity
                     style={styles.loginButton}
-                    onPress={() => signInAsync('custom', userLoginData.current)}
+                    onPress={() => {
+                        isLoading(true);
+                        signInAsync('custom', userLoginData.current).then(()=>{setTimeout(()=>isLoading(false),3000)})
+                    }}
                 >
                     <Text style={styles.loginButtonText}>Login</Text>
                 </TouchableOpacity>
             </View>
+            
         </View>
     )
 }
@@ -104,6 +108,9 @@ const styles = StyleSheet.create({
         height: 80,
         width: 80,
     },
+    loading:{
+        flex:1
+    }
 })
 
 export default Login

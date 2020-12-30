@@ -12,6 +12,9 @@ interface AuthContextType {
     updateUserData: () => Promise<void>
     user: GoogleSignIn.GoogleUser | undefined
     userData: UserType | undefined
+    loading: Boolean
+    setLoading: any
+    isLoading: any
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType)
@@ -26,6 +29,7 @@ export const AuthContextProvider = ({
         undefined
     )
     const [userData, setUserData] = useState<UserType | undefined>(undefined)
+    let [loading, setLoading] = useState<Boolean>(false);
 
     useEffect(() => {
         GoogleSignIn.initAsync()
@@ -45,7 +49,7 @@ export const AuthContextProvider = ({
         // Baseado no valor de providerOption escolhe o provider adequado
         switch (providerOption) {
             case 'google':
-                await GoogleSignIn.askForPlayServicesAsync()
+                await GoogleSignIn.askForPlayServicesAsync().then(()=> isLoading(false))
                 const { type, user } = await GoogleSignIn.signInAsync()
                 if (type === 'success') {
                     _handleSignInAsync(user)
@@ -109,7 +113,9 @@ export const AuthContextProvider = ({
         const usuarioDB = await UserAPI.getOne(user.uid)
         setUserData(usuarioDB.data)
     }
-
+    const isLoading = (state:boolean)=>{
+        setLoading(loading = state);
+    }
     return (
         <AuthContext.Provider
             value={{
@@ -119,6 +125,9 @@ export const AuthContextProvider = ({
                 isLogged,
                 user,
                 userData,
+                loading,
+                setLoading,
+                isLoading
             }}
         >
             {children}

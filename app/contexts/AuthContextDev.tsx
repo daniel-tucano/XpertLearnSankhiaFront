@@ -15,12 +15,14 @@ interface AuthContextType {
     updateUserData: () => Promise<void>
     user: firebase.User | undefined
     userData: UserType | undefined
+    loading: Boolean
+    setLoading: any
+    isLoading: any
 }
 
 WebBrowser.maybeCompleteAuthSession()
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType)
-
 export const AuthContextProvider = ({
     children,
 }: {
@@ -31,6 +33,7 @@ export const AuthContextProvider = ({
     >('notLogged')
     const [user, setUser] = useState<firebase.User | undefined>(undefined)
     const [userData, setUserData] = useState<UserType | undefined>(undefined)
+    let [loading, setLoading] = useState<Boolean>(false);
 
     const [_request, response, promptAsync] = Google.useIdTokenAuthRequest({
         clientId:
@@ -92,6 +95,7 @@ export const AuthContextProvider = ({
                         })
                 } else {
                     console.log('please specify an email and a password')
+                    
                 }
                 break
             default:
@@ -122,6 +126,10 @@ export const AuthContextProvider = ({
         const usuarioDB = await UserAPI.getOne(user.uid)
         setUserData(usuarioDB.data)
     }
+    const isLoading = (state:boolean)=>{
+        setLoading(loading = state);
+        console.log(loading);
+    }
 
     return (
         <AuthContext.Provider
@@ -132,6 +140,9 @@ export const AuthContextProvider = ({
                 loginState,
                 user,
                 userData,
+                loading,
+                setLoading,
+                isLoading
             }}
         >
             {children}
