@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import AuthContext from './contexts/AuthContextDev'
-import MainLoader from './components/MainLoader'
 
 import Main from './screens/Main/Main'
 import Profile from './screens/Profile'
@@ -19,7 +18,7 @@ const Navigator = () => {
                 <>
                     <StackNavigator.Screen
                         name="main"
-                        component={loginState === 'loading' ? MainLoader : Main}
+                        component={loginState === 'loading' ? Load : Main}
                         options={{
                             headerShown: false,
                         }}
