@@ -23,13 +23,22 @@ const Navigator = () => {
                             headerShown: false,
                         }}
                     />
-                    <StackNavigator.Screen name="profile" component={Profile} />
+                    <StackNavigator.Screen
+                        name="profile"
+                        component={UserProfile}
+                    />
                 </>
             ) : (
                 <StackNavigator.Screen name="login" component={Login} />
             )}
         </StackNavigator.Navigator>
     )
+}
+
+const UserProfile = () => {
+    const { userData } = useContext(AuthContext)
+
+    return <Profile userData={userData} />
 }
 
 export default Navigator

@@ -2,7 +2,6 @@ import React from 'react'
 import { Text } from 'react-native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import TopBar from '../../components/TopBar'
-import { Entypo } from '@expo/vector-icons';
 import Feed from './tabs/Feed'
 
 const Tab = createMaterialTopTabNavigator()

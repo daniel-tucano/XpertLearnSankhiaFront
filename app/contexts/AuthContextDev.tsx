@@ -76,13 +76,7 @@ export const AuthContextProvider = ({
                             additionalData.password
                         )
                         .then((result) => {
-                            if (result.user) {
-                                setUser(result.user)
-                                setLoginState('logged')
-                            } else {
-                                setUser(undefined)
-                                setLoginState('notLogged')
-                            }
+                            _handleSignInAsync(result.user)
                         })
                         .catch((error) => {
                             console.log(error.message)

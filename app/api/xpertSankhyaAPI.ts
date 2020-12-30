@@ -26,7 +26,7 @@ export interface PostType {
     _id: string
     likes: { creatorID: string }[]
     creatorUid: string
-    content: { type: string; payload: string }
+    content: { type: 'video' | 'image'; payload: string }
     createdAt: Date
 }
 
@@ -68,6 +68,7 @@ export interface basicAPI<T> {
 }
 
 export const setAuthToken = (authToken: string) => {
+    console.log(authToken)
     axios.defaults.headers.common.Authorization = `Bearer ${authToken}`
 }
 
