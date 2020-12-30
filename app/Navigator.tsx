@@ -7,7 +7,13 @@ import Profile from './screens/Profile'
 import Login from './screens/Login'
 import Load from './screens/loading/Load'
 
-const StackNavigator = createStackNavigator()
+export type RootStackParamList = {
+    profile: { userUid: string }
+    main: undefined
+    login: undefined
+}
+
+const StackNavigator = createStackNavigator<RootStackParamList>()
 
 const Navigator = () => {
     const { loginState } = useContext(AuthContext)
@@ -23,22 +29,13 @@ const Navigator = () => {
                             headerShown: false,
                         }}
                     />
-                    <StackNavigator.Screen
-                        name="profile"
-                        component={UserProfile}
-                    />
+                    <StackNavigator.Screen name="profile" component={Profile} />
                 </>
             ) : (
                 <StackNavigator.Screen name="login" component={Login} />
             )}
         </StackNavigator.Navigator>
     )
-}
-
-const UserProfile = () => {
-    const { userData } = useContext(AuthContext)
-
-    return <Profile userData={userData} />
 }
 
 export default Navigator
