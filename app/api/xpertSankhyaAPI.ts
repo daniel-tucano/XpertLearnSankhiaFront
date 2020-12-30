@@ -24,9 +24,10 @@ export interface UserType {
 
 export interface PostType {
     _id: string
-    likes: { creatorID: string }[]
+    likes: { creatorUid: string }[]
     creatorUid: string
-    content: { type: 'video' | 'image'; payload: string }
+    content: { type: 'video' | 'image'; payload: string[] }
+    description: string
     createdAt: Date
 }
 
@@ -114,7 +115,12 @@ export const UserAPI: basicAPI<UserType> = class UserAPI {
     }
 }
 
-export const PostAPI: basicAPI<PostType> = class PostAPI {
+interface PostAPIOnlyMethods {
+    like(postID: string): Promise<AxiosResponse<PostType>>
+    dislike(postID: string): Promise<AxiosResponse<PostType>>
+}
+
+export const PostAPI: basicAPI<PostType> & PostAPIOnlyMethods = class PostAPI {
     static async getOne(postID: string) {
         return await axios.get<PostType>(`/posts/${postID}`)
     }
@@ -145,6 +151,18 @@ export const PostAPI: basicAPI<PostType> = class PostAPI {
 
     static async updateOne(postID: string, updateData: PostType) {
         return axios.put<PostType>(`/posts/${postID}`, updateData, {
+            withCredentials: true,
+        })
+    }
+
+    static async like(postID: string) {
+        return axios.get<PostType>(`/posts/like/${postID}`, {
+            withCredentials: true,
+        })
+    }
+
+    static async dislike(postID: string) {
+        return axios.get<PostType>(`/posts/like/${postID}?state=false`, {
             withCredentials: true,
         })
     }

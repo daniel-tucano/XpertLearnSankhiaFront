@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { View, Text } from 'react-native'
+import { Text } from 'react-native'
 import { RouteProp } from '@react-navigation/native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { RootStackParamList } from '../Navigator'
 import { UserAPI, UserType } from '../api/xpertSankhyaAPI'
 import AuthContext from '../contexts/AuthContextDev'
 
-type ProfileRoutePropType = RouteProp<RootStackParamList, 'Profile'>
+type ProfileRoutePropType = RouteProp<RootStackParamList, 'profile'>
 
 interface ProfilePropsType {
     route: ProfileRoutePropType
@@ -31,9 +32,9 @@ const Profile = ({ route }: ProfilePropsType) => {
     }, [userUid])
 
     return (
-        <View>
+        <SafeAreaView>
             {isLoading ? <Text>Loading</Text> : <Text>{userData.name}</Text>}
-        </View>
+        </SafeAreaView>
     )
 }
 

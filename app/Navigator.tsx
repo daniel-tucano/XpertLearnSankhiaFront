@@ -31,10 +31,19 @@ const Navigator = () => {
                             headerShown: false,
                         }}
                     />
-                    <StackNavigator.Screen name="profile" component={Profile} />
+                    <StackNavigator.Screen
+                        name="profile"
+                        component={Profile}
+                        options={{
+                            headerShown: false,
+                        }}
+                    />
                     <StackNavigator.Screen
                         name="postImageView"
                         component={PostImageView}
+                        options={{
+                            headerShown: false,
+                        }}
                     />
                 </>
             ) : (

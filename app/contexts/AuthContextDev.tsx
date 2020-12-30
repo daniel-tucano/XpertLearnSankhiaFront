@@ -108,12 +108,12 @@ export const AuthContextProvider = ({
 
     const _handleSignInAsync = async (user: firebase.User) => {
         if (!user) return
-        setLoginState('logged')
         setUser(user)
         const authToken = await user.getIdToken()
         setAuthToken(authToken)
         const usuarioDB = await UserAPI.getOne(user.uid)
         setUserData(usuarioDB.data)
+        setLoginState('logged')
     }
 
     return (
