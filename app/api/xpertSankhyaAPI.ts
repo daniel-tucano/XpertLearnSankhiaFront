@@ -111,7 +111,7 @@ export const UserAPI: basicAPI<UserType> & UserAPIOnlyMethods = class UserAPI {
     }
 
     static async createOne(
-        userData: UserType,
+        userData: Omit<UserType, '_id'>,
         onUploadProgress?: (progressEvent: ProgressEvent<EventTarget>) => void
     ) {
         return axios.post<UserType>(`/users`, userData, {
@@ -120,7 +120,7 @@ export const UserAPI: basicAPI<UserType> & UserAPIOnlyMethods = class UserAPI {
         })
     }
 
-    static async updateOne(userID: string, updateData: UserType) {
+    static async updateOne(userID: string, updateData: Omit<UserType, '_id'>) {
         return axios.put<UserType>(`/users/${userID}`, updateData, {
             withCredentials: true,
         })
@@ -182,7 +182,7 @@ export const PostAPI: basicAPI<PostType> & PostAPIOnlyMethods = class PostAPI {
     }
 
     static async createOne(
-        postData: PostType,
+        postData: Omit<PostType, '_id'>,
         onUploadProgress?: (progressEvent: ProgressEvent<EventTarget>) => void
     ) {
         return axios.post<PostType>(`/posts`, postData, {
@@ -191,7 +191,7 @@ export const PostAPI: basicAPI<PostType> & PostAPIOnlyMethods = class PostAPI {
         })
     }
 
-    static async updateOne(postID: string, updateData: PostType) {
+    static async updateOne(postID: string, updateData: Omit<PostType, '_id'>) {
         return axios.put<PostType>(`/posts/${postID}`, updateData, {
             withCredentials: true,
         })
@@ -236,7 +236,7 @@ export const CommentAPI: basicAPI<CommentType> = class CommentAPI {
     }
 
     static async createOne(
-        commentData: CommentType,
+        commentData: Omit<CommentType, '_id'>,
         onUploadProgress?: (progressEvent: ProgressEvent<EventTarget>) => void
     ) {
         return axios.post<CommentType>(`/comments`, commentData, {
@@ -245,7 +245,10 @@ export const CommentAPI: basicAPI<CommentType> = class CommentAPI {
         })
     }
 
-    static async updateOne(commentID: string, updateData: CommentType) {
+    static async updateOne(
+        commentID: string,
+        updateData: Omit<CommentType, '_id'>
+    ) {
         return axios.put<CommentType>(`/comments/${commentID}`, updateData, {
             withCredentials: true,
         })

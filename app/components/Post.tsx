@@ -70,7 +70,7 @@ function Post({ post }: PostPropsType) {
                 <TouchableOpacity
                     style={styles.postImage}
                     onPress={() =>
-                        navigation.navigate('postImageView', {
+                        navigation.navigate('imageView', {
                             uris: post.content.payload,
                         })
                     }

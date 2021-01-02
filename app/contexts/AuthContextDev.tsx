@@ -12,7 +12,7 @@ interface AuthContextType {
     ) => Promise<void>
     signOutAsync: () => Promise<void>
     loginState: 'notLogged' | 'loading' | 'logged'
-    updateUserData: () => Promise<void>
+    updateUserData: () => Promise<UserType>
     user: firebase.User | undefined
     userData: UserType | undefined
 }
@@ -104,11 +104,12 @@ export const AuthContextProvider = ({
         if (!user) return
         const usuarioDB = await UserAPI.getOne(user.uid)
         setUserData(usuarioDB.data)
+        return usuarioDB.data
     }
 
-    const _handleSignInAsync = async (user: firebase.User) => {
-        if (!user) return
-        setUser(user)
+    const _handleSignInAsync = async (providedUser: firebase.User) => {
+        if (!providedUser) return
+        setUser(providedUser)
         const authToken = await user.getIdToken()
         setAuthToken(authToken)
         const usuarioDB = await UserAPI.getOne(user.uid)

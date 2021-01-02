@@ -6,9 +6,9 @@ import * as ImagePicker from 'expo-image-picker'
 import { RouteProp } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { RootStackParamList } from '../Navigator'
+import PhotoOrMediaOptionsModal from '../components/PhotoOrMediaOptionsModal'
 import { UserAPI, UserType } from '../api/xpertSankhyaAPI'
 import AuthContext from '../contexts/AuthContextDev'
-import { requestAsync } from 'expo-auth-session/build/Fetch'
 
 type ProfileNavigationPropType = StackNavigationProp<
     RootStackParamList,
@@ -25,9 +25,13 @@ interface ProfilePropsType {
 const Profile = ({ navigation, route }: ProfilePropsType) => {
     const { userUid } = route.params
 
-    const { userData: loggedUserData } = useContext(AuthContext)
+    const { userData: loggedUserData, updateUserData } = useContext(AuthContext)
     const [userData, setUserData] = useState<UserType | undefined>(undefined)
     const [isLoggedUser, setIsloggedUser] = useState<boolean>(false)
+    const [profileOptionsIsOpen, setProfileOptionsIsOpen] = useState(false)
+    const [backgroundOptionsIsOpen, setBackgroundOptionsIsOpen] = useState(
+        false
+    )
 
     useEffect(() => {
         if (loggedUserData.uid === userUid) {
@@ -38,63 +42,59 @@ const Profile = ({ navigation, route }: ProfilePropsType) => {
                 setUserData(userResponse.data)
             })
         }
-    }, [userUid])
+    }, [userUid, loggedUserData])
 
-    const handleProfileImagePick = async () => {
-        const permission = await ImagePicker.getMediaLibraryPermissionsAsync()
+    const handleImagePick = async (option: {
+        source: 'camera' | 'media'
+        destination: 'profile' | 'background'
+    }) => {
+        let result: ImagePicker.ImagePickerResult
+        if (option.source === 'media') {
+            const permission = await ImagePicker.getMediaLibraryPermissionsAsync()
 
-        if (!permission.granted) {
-            await ImagePicker.requestMediaLibraryPermissionsAsync()
+            if (!permission.granted) {
+                await ImagePicker.requestMediaLibraryPermissionsAsync()
+            }
+
+            result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: option.destination === 'profile' ? [1, 1] : [2, 1],
+                quality: 1,
+            })
+        } else if (option.source === 'camera') {
+            const permission = await ImagePicker.getCameraPermissionsAsync()
+
+            !permission.granted &&
+                (await ImagePicker.requestCameraPermissionsAsync())
+
+            result = await ImagePicker.launchCameraAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: option.destination === 'profile' ? [1, 1] : [2, 1],
+                quality: 1,
+            })
         }
 
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        })
-
-        if (!result.cancelled) {
+        if (result.cancelled === false) {
+            const mimeType = result.uri.substring(result.uri.length - 3)
             const formData = new FormData()
             formData.append('file', {
                 uri: result.uri,
-                name: 'profile-pic',
-                type: result.type,
+                name: 'file',
+                type: `image/${mimeType}`,
             })
-            UserAPI.uploadProfileImg(userData.uid, formData, {
-                original: false,
-            })
-                .then((response) => console.log(response))
-                .catch((e) => console.log(e))
-        }
-    }
+            if (option.destination === 'profile') {
+                await UserAPI.uploadProfileImg(userData.uid, formData, {
+                    original: false,
+                })
+            } else if (option.destination === 'background') {
+                await UserAPI.uploadBackgroundImg(userData.uid, formData, {
+                    original: false,
+                })
+            }
 
-    const handleBackgroundImagePick = async () => {
-        const permission = await ImagePicker.getMediaLibraryPermissionsAsync()
-
-        if (!permission.granted) {
-            await ImagePicker.requestMediaLibraryPermissionsAsync()
-        }
-
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        })
-
-        if (!result.cancelled) {
-            const formData = new FormData()
-            formData.append('file', {
-                uri: result.uri,
-                // name: 'file',
-                // type: result.type,
-            })
-            UserAPI.uploadProfileImg(userData.uid, formData, {
-                original: false,
-            })
-                .then((response) => console.log(response))
-                .catch((e) => console.log(e))
+            setTimeout(async () => setUserData(await updateUserData()), 300)
         }
     }
 
@@ -156,29 +156,71 @@ const Profile = ({ navigation, route }: ProfilePropsType) => {
                                         right: -5,
                                     }}
                                 >
-                                    <TouchableOpacity
-                                        onPress={handleProfileImagePick}
+                                    <PhotoOrMediaOptionsModal
+                                        isOpen={profileOptionsIsOpen}
+                                        onClose={() =>
+                                            setProfileOptionsIsOpen(false)
+                                        }
+                                        onMedia={() =>
+                                            handleImagePick({
+                                                source: 'media',
+                                                destination: 'profile',
+                                            })
+                                        }
+                                        onPhoto={() =>
+                                            handleImagePick({
+                                                source: 'camera',
+                                                destination: 'profile',
+                                            })
+                                        }
                                     >
-                                        <MaterialIcons
-                                            name="add-a-photo"
-                                            size={24}
-                                            color="rgb(207, 185, 185)"
-                                        />
-                                    </TouchableOpacity>
+                                        <TouchableOpacity
+                                            onPress={() =>
+                                                setProfileOptionsIsOpen(true)
+                                            }
+                                        >
+                                            <MaterialIcons
+                                                name="add-a-photo"
+                                                size={24}
+                                                color="rgb(207, 185, 185)"
+                                            />
+                                        </TouchableOpacity>
+                                    </PhotoOrMediaOptionsModal>
                                 </View>
                             )}
                         </View>
                         {isLoggedUser && (
                             <View style={styles.addBackgroundImageBtn}>
-                                <TouchableOpacity
-                                    onPress={handleBackgroundImagePick}
+                                <PhotoOrMediaOptionsModal
+                                    isOpen={backgroundOptionsIsOpen}
+                                    onClose={() =>
+                                        setBackgroundOptionsIsOpen(false)
+                                    }
+                                    onMedia={() =>
+                                        handleImagePick({
+                                            source: 'media',
+                                            destination: 'background',
+                                        })
+                                    }
+                                    onPhoto={() =>
+                                        handleImagePick({
+                                            source: 'camera',
+                                            destination: 'background',
+                                        })
+                                    }
                                 >
-                                    <MaterialIcons
-                                        name="add-photo-alternate"
-                                        size={40}
-                                        color="rgb(207, 185, 185)"
-                                    />
-                                </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={() =>
+                                            setBackgroundOptionsIsOpen(true)
+                                        }
+                                    >
+                                        <MaterialIcons
+                                            name="add-photo-alternate"
+                                            size={40}
+                                            color="rgb(207, 185, 185)"
+                                        />
+                                    </TouchableOpacity>
+                                </PhotoOrMediaOptionsModal>
                             </View>
                         )}
                     </View>
