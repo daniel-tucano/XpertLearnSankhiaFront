@@ -16,7 +16,12 @@ export interface UserType {
         path?: string
         url?: string
     }
+    backgroundImg?: {
+        path?: string
+        url?: string
+    }
     originalProfilePicPath?: string
+    originalBackgroundImgPath?: string
     description: string
     comments: string[]
     joinDate: Date
@@ -73,7 +78,20 @@ export const setAuthToken = (authToken: string) => {
     axios.defaults.headers.common.Authorization = `Bearer ${authToken}`
 }
 
-export const UserAPI: basicAPI<UserType> = class UserAPI {
+interface UserAPIOnlyMethods {
+    uploadProfileImg: (
+        uid: string,
+        imageData: FormData,
+        options: { original?: boolean }
+    ) => Promise<AxiosResponse<string>>
+    uploadBackgroundImg: (
+        uid: string,
+        imageData: FormData,
+        options: { original?: boolean }
+    ) => Promise<AxiosResponse<string>>
+}
+
+export const UserAPI: basicAPI<UserType> & UserAPIOnlyMethods = class UserAPI {
     static async getOne(userID: string) {
         return await axios.get<UserType>(`/users/${userID}`)
     }
@@ -112,6 +130,30 @@ export const UserAPI: basicAPI<UserType> = class UserAPI {
         return axios.delete<UserType>(`/users/${userID}`, {
             withCredentials: true,
         })
+    }
+
+    static async uploadProfileImg(
+        uid: string,
+        imageData: FormData,
+        { original = false }: { original?: boolean }
+    ): Promise<AxiosResponse<string>> {
+        return axios.post(
+            `/users/upload/profile-image/${uid}?original=${original}`,
+            imageData,
+            { withCredentials: true }
+        )
+    }
+
+    static async uploadBackgroundImg(
+        uid: string,
+        imageData: FormData,
+        { original = false }: { original?: boolean }
+    ): Promise<AxiosResponse<string>> {
+        return axios.post(
+            `/users/upload/background-image/${uid}?original=${original}`,
+            imageData,
+            { withCredentials: true }
+        )
     }
 }
 

@@ -4,13 +4,13 @@ import { ImageViewer } from 'react-native-image-zoom-viewer'
 import { RouteProp } from '@react-navigation/native'
 import { RootStackParamList } from '../Navigator'
 
-type PostImageViewRouteType = RouteProp<RootStackParamList, 'postImageView'>
+type ImageViewRouteType = RouteProp<RootStackParamList, 'imageView'>
 
-interface PostImageViewProps {
-    route: PostImageViewRouteType
+interface ImageViewProps {
+    route: ImageViewRouteType
 }
 
-function PostImageView({ route }: PostImageViewProps) {
+function ImageView({ route }: ImageViewProps) {
     const { uris } = route.params
 
     return (
@@ -33,4 +33,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default PostImageView
+export default ImageView

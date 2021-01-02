@@ -14,7 +14,8 @@ function Feed() {
 
     return (
         <ScrollView style={styles.container}>
-            {posts.length > 0 && posts.map((post) => <Post post={post} />)}
+            {posts.length > 0 &&
+                posts.map((post) => <Post key={post._id} post={post} />)}
         </ScrollView>
     )
 }
