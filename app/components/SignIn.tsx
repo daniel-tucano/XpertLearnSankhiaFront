@@ -1,14 +1,42 @@
 import React from 'react';
-import {useFormik} from 'formik';
+import {Formik, useFormik} from 'formik';
+import { Button, TextInput, View } from 'react-native';
+import { TouchableNativeFeedback } from 'react-native-gesture-handler';
+import FloatTextInput from './forms/FloatTextInput';
 
-const SignInForm =()=>{
-    
-}
 function SignIn(props) {
+    const initialValues = {
+           Nome:'',
+           Sobrenome:'',
+           "Nome de Usuário":'',
+           "Data de Nascimento":new Date,
+           Email:'',
+           Senha:'',
+           "Confirmar Senha":""
+       }
     return (
-        <div>
-            
-        </div>
+        <Formik initialValues={initialValues} 
+        onSubmit={values=>console.log(values) }>
+            {({ handleChange, handleBlur, handleSubmit, values }) => (
+            <View>
+                <FloatTextInput
+                onChangeTextValue={handleChange('Nome')}
+                onBlur={handleBlur('Nome')}
+                value={values.Nome}
+                />
+                <FloatTextInput
+                onChangeTextValue={handleChange('Sobrenome')}
+                onBlur={handleBlur('Sobrenome')}
+                value={values.Sobrenome}
+                />
+                <FloatTextInput
+                onChangeTextValue={handleChange('Email')}
+                onBlur={handleBlur('Email')}
+                value={values.Email}
+                />
+            </View>
+            )}
+        </Formik>
     );
 }
 
